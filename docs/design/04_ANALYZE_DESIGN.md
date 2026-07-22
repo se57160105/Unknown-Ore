@@ -94,16 +94,19 @@ The client must not receive ResultItemId before Reveal.
 AUTHORITATIVE RESULT IDENTITY
 -----------------------------
 Analyze resolves exactly one authoritative ItemId from reward-pool references to the
-catalog in 25_ITEM_CATALOG_DESIGN. Future runtime ItemConfig resolves DisplayName, Cave,
-Rarity, CollectionPosition, visual/model/icon references, and sell metadata. Analyze must
-not define or override those fields.
+catalog in 25_ITEM_CATALOG_DESIGN. ItemConfig resolves ItemId, DisplayName, Cave,
+Rarity, and CollectionPosition. Names and visuals remain deferred to UO-3600; sell value
+belongs to centralized Economy configuration. Analyze must not define or override them.
 
 Production results must not fall back to arbitrary unknown ItemType strings. A reward
 reference that is absent from ItemConfig is invalid and must fail closed without creating
 an unidentified Actual Item. Random Quality and random per-instance gameplay stats are
 not part of finalized item identity unless explicitly approved in authoritative design.
 
-UO-3500 is documentation-only and does not change the current prototype implementation.
+PROTOTYPE RUNTIME - NOT PRODUCTION DESIGN:
+The current Analyze implementation still consumes legacy GemType identifiers and creates
+random Quality plus a derived per-instance Value. These behaviors remain temporarily for
+compatibility; they are not production item identity and are not changed by UO-3500.
 
 ANALYZE SPEED SNAPSHOT
 ----------------------

@@ -4,6 +4,22 @@
 -- LATEST MERGED PRE-CODE V1 BASELINE
 --========================================================
 
+CANONICAL ITEM DEPENDENCY ORDER
+-------------------------------
+Game Design
+-> Item Catalog Design
+-> ItemConfig
+-> Legacy Migration
+-> Analyze Migration
+-> Collection Migration
+-> Shelf
+-> Economy
+-> UI
+
+This order governs every item-identity implementation and migration step below. Existing
+prototype runtime does not make a later consumer an authority or allow catalog work to be
+scheduled after Collection.
+
 PHASE 0 — BASELINE
 ------------------
 Freeze Latest Merged V1 Design.
@@ -11,8 +27,12 @@ Resolve Upgrade-Level persistence decision. [RESOLVED UO-0003: persist upgrade
 levels/IDs; derive runtime from config. See 08/10/17.]
 Create BalanceConfig.
 Create GameEnums.
-Complete the authoritative catalog design in 25_ITEM_CATALOG_DESIGN, approve stable
-ItemIds, then create the production 96-item ItemConfig.
+Complete the authoritative catalog design in 25_ITEM_CATALOG_DESIGN, create the
+production ItemConfig foundation using the locked ItemId format, and record the approved
+retirement-without-mapping disposition before migrating Analyze or any downstream consumer.
+Planning status: UO-3503 - Runtime Catalog Audit is completed. The future runtime migration
+described in Phase 5 is a separate ticket whose number remains TBD; it is not created or
+defined by this plan.
 
 PHASE 1 — DATA FOUNDATION
 -------------------------
@@ -74,8 +94,18 @@ First Legendary/Mythic Auto Lock
 Held Item model
 Inspect
 
-PHASE 7 — SHELF / BUFF
+PHASE 7 — COLLECTION MIGRATION
+------------------------------
+Migrate discovery identity to ItemConfig after Analyze/Actual Item identity is authoritative.
+Personal Reveal discovery
+Rarity sets
+Manual Claim
+24/24 Cave reward
+96/96 Global reward
+
+PHASE 8 — SHELF / BUFF
 ----------------------
+Consume ItemConfig-backed item metadata only after Collection migration.
 Physical Shelves
 Draft Editor
 Real-time preview
@@ -83,22 +113,15 @@ Atomic Apply
 Final-state Inventory validation
 Visitor inspect
 
-PHASE 8 — SELL / ECONOMY
+PHASE 9 — SELL / ECONOMY
 ------------------------
+Consume ItemConfig or the explicitly referenced economy table after Shelf integration.
 Sell Selected
 Quantity controls
 Quick Sell Common/Uncommon
 Held/Locked/Shelf exclusions
 Transaction-time Sell Buff
 Telemetry
-
-PHASE 9 — COLLECTION
---------------------
-Personal Reveal discovery
-Rarity sets
-Manual Claim
-24/24 Cave reward
-96/96 Global reward
 
 PHASE 10 — MONETIZATION
 -----------------------
@@ -161,27 +184,29 @@ narrow interfaces first:
    c. Version/migration contract + validator (the interface both migration and
       services depend on - this breaks the validator<->schema cycle).
 
-2. EXPAND (add, do not remove): after UO-3500 and approval of stable ItemIds,
-   author GameEnums / BalanceConfig / ItemConfig + resolvers behind a temporary ADAPTER
-   over the old config. A representative Crystal subset may prove mechanics, but it must
-   reference approved catalog IDs; the temporary slot identifiers and nine legacy
-   prototype identifiers in 25_ITEM_CATALOG_DESIGN are not silently final.
-   Add new schema groups + compatibility accessors without deleting old fields.
-   Add a buff-read interface (compat impl) so Mining/Sell read buffs before the
-   Shelf rewrite - this breaks the Mining<->Buff cycle.
+2. ITEM CATALOG + ITEMCONFIG: DQ-IC-02 is resolved. UO-3501 authors the validated,
+   read-only 96-entry ItemConfig using <Cave>_<Rarity>_<Position>. It does not add an
+   adapter or migrate callers.
 
-3. MIGRATE VERTICAL SLICES (each: server + UI + rollback; PROTOTYPE-conversion
-   migration fixtures are NOT required per the UO-0003 reset - but each slice
-   still ships the clean-schema forward path + rollback):
-   Analyze FIRST (only after its result is redacted by the projection), then
-   Items/Collection, then Storage/Deposit + Mining/Discovery/Progression, then
-   Shelf/Buff + Sell.
+3. LEGACY DISPOSITION: DQ-IC-04 is resolved. All nine prototype identifiers are retired
+   with no production mapping and must not enter ItemConfig. Runtime removal remains
+   deferred to a later explicit migration ticket.
 
-4. ATOMIC SYSTEMS: Fusion + Refinery after Storage + replay-safety exist.
+4. ANALYZE MIGRATION (future runtime migration ticket: TBD): migrate ContainerConfig
+   reward references, Analyze result identity,
+   and Inventory grants to authoritative ItemIds. Public projection/redaction must exist
+   before persisted hidden results.
 
-5. Then World/Social and Monetization (durable receipts), and FINALLY contract
-   legacy fields + complete the full 96-item catalog + isolated hygiene cleanup
-   (rename remotes, remove dead artifacts) after fleet convergence.
+5. COLLECTION MIGRATION: migrate discovery keys and catalog presentation only after
+   Analyze and Actual Item identity are authoritative.
+
+6. SHELF, then 7. ECONOMY, then 8. UI: each consumes ItemConfig-backed identity and
+   metadata. None may define or backfill catalog identity.
+
+Unrelated Storage/Progression/Fusion/Refinery work follows its own safety dependencies,
+but it cannot invert the item-identity order above. World/Social and Monetization follow
+their existing contracts. Final names/assets and isolated hygiene remain approval-gated
+content work; they do not move Item Catalog authority after downstream consumers.
 
 Config migrates behind the adapter caller-by-caller; no atomic hard cutover.
 Every schema-touching step ships with the deployment / rollback gates in 17.

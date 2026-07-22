@@ -69,14 +69,14 @@ No Item Grade.
 
 ITEM CATALOG IDENTITY CONTRACT
 ------------------------------
-Each Actual Item instance stores a stable ItemId reference to the authority defined by
-25_ITEM_CATALOG_DESIGN and future runtime ItemConfig. DisplayName, Cave, Rarity,
-CollectionPosition, visual/model/icon references, and sell metadata are catalog data and
-must not be duplicated as independent save authorities.
+Each production Actual Item instance stores a stable ItemId reference to
+25_ITEM_CATALOG_DESIGN and ItemConfig. ItemConfig owns DisplayName, Cave, Rarity, and
+CollectionPosition. Names/visuals remain deferred; sell value is derived from ItemConfig
+Rarity through centralized Economy configuration.
 
-Collection discovery is keyed by stable ItemId. Catalog entries themselves are content,
-not per-player save records. UO-3500 does not change the profile schema or migrate data;
-the nine prototype identifiers remain unresolved design mappings.
+Collection discovery is keyed by stable ItemId. Catalog entries are content, not
+per-player save records. The nine prototype identifiers are retired with no production
+mapping. UO-3501 changes no profile schema and migrates no saved data.
 
 ANALYZE JOB
 -----------

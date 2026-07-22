@@ -4,6 +4,45 @@
 -- LATEST MERGED PRE-CODE V1 BASELINE
 --========================================================
 
+2026-07-20  UO-3503 RUNTIME CATALOG AUDIT (COMPLETED)
+----------------------------------------------------
+Completed the documentation-only Runtime Catalog Audit in 27_RUNTIME_CATALOG_AUDIT,
+including the verified runtime dependency graph, migration readiness assessment,
+recommended migration order, and risk record. Planning documents were synchronized so
+UO-3503 refers only to this completed audit; the future runtime migration ticket number
+remains TBD and no new migration ticket was created or defined. No runtime file changed.
+
+2026-07-19  UO-3502 LEGACY ITEM DISPOSITION RECORD
+---------------------------------------------------
+Created 26_LEGACY_ITEM_DISPOSITION as the single authoritative record of all nine
+retired legacy prototype Item identifiers (Coal, Quartz, Ruby, Emerald, Sapphire,
+Diamond, AuroraCrystal, CelestialQuartz, SecretCrystalItem). Each is documented as
+RETIRED with no production ItemId, no production catalog slot, no alias, no automatic
+mapping, and no SaveData migration - historical reference only. Consolidated the
+duplicated legacy disposition table previously split across 25_ITEM_CATALOG_DESIGN and
+14_FIRST_PROTOTYPE_SPEC into this single document; both now reference it instead of
+restating it. No production ItemConfig, GemConfig, ContainerConfig, CollectionCatalog,
+Analyze, Inventory, save data, reward pools, or UI were changed.
+
+2026-07-19  UO-3501 RUNTIME ITEMCONFIG FOUNDATION
+--------------------------------------------------
+Approved Item Catalog decisions recorded before implementation:
+- DQ-IC-01 RESOLVED: ItemConfig stores Rarity; centralized Economy config derives base
+  sell value. ItemConfig has no SellTier or BaseSellValue.
+- DQ-IC-02 RESOLVED: production IDs use <Cave>_<Rarity>_<Position> and are stable.
+- DQ-IC-03 DEFERRED: all names remain NAME PENDING; visuals move to UO-3600.
+- DQ-IC-04 RESOLVED: nine legacy identifiers are retired with no production mapping.
+- DQ-IC-05 RESOLVED: RewardPoolConfig exclusively owns membership and weights; intended
+  production pools use four same-Cave/same-Rarity items. [SUPERSEDED BY UO-3505-R1,
+  2026-07-22: the "at equal weight" selection recorded here at UO-3501 time was stale and
+  has been corrected - current production selection is Cave + Container Tier -> Resolve
+  Rarity -> Roll Position A/B/C/D using 40/30/20/10 -> Resolve production ItemId. See
+  25_ITEM_CATALOG_DESIGN DQ-IC-05 and 27_RUNTIME_CATALOG_AUDIT for the current
+  authoritative statement; this entry is preserved as historical record of the original
+  UO-3501 decision.]
+UO-3501 creates only the validated read-only ItemConfig foundation. No Analyze,
+Collection, Shelf, Economy, UI, reward-pool, or save migration is included.
+
 2026-07-18  UO-3500 AUTHORITATIVE ITEM CATALOG DESIGN REFACTOR
 ----------------------------------------------------------------
 25_ITEM_CATALOG_DESIGN is now the single design authority for collectible identity and

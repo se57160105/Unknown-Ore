@@ -1,21 +1,23 @@
 25_ITEM_CATALOG_DESIGN
 Status: AUTHORITATIVE DESIGN
 Ticket: UO-3500 - Authoritative Item Catalog Design Refactor
+Approved decisions recorded for UO-3501 - Runtime ItemConfig Foundation
 
 PURPOSE
 
 This document is the single design authority for collectible item identity and for the
-complete item-to-Collection-position catalog. Future runtime ItemConfig data implements
-this design. Gameplay systems consume catalog data; they do not independently define it.
+complete item-to-Collection-position catalog. UO-3501 creates the runtime ItemConfig
+foundation that implements this design without migrating downstream systems. Gameplay
+systems consume catalog data; they do not independently define it.
 
 AUTHORITY AND DEPENDENCY DIRECTION
 
-Design Item Catalog
+Game Design
+-> Item Catalog Design (this document)
 -> Runtime ItemConfig
--> ContainerConfig reward references
--> Analyze
--> Inventory
--> Collection
+-> Legacy Migration
+-> Analyze Migration (including ContainerConfig reward references and Inventory grants)
+-> Collection Migration
 -> Shelf
 -> Economy
 -> UI
@@ -34,8 +36,9 @@ TERM BOUNDARIES
 - CollectionRarity: The grouping rarity shown by Collection. It resolves from the
   authoritative item's Rarity and is not a separate item-definition authority.
 - CollectionPosition: Exactly one slot A, B, C, or D within the item's Cave and Rarity.
-- RewardPool membership: A reference from a reward source to an ItemId. Membership does
-  not redefine the item's Cave, Rarity, CollectionRarity, or CollectionPosition.
+- RewardPool membership: A reference owned exclusively by RewardPoolConfig. ItemConfig
+  contains no membership, weight, chance, or pool fields. Membership never redefines the
+  item's Cave, Rarity, CollectionRarity, or CollectionPosition.
 
 FINALIZED CATALOG SHAPE
 
@@ -48,153 +51,165 @@ FINALIZED CATALOG SHAPE
 - ItemIds are globally unique; Cave/Rarity/Position tuples are globally unique.
 - No gameplay system may independently define collectible identity.
 
-FUTURE RUNTIME ITEMCONFIG SCHEMA
+UO-3501 RUNTIME ITEMCONFIG SCHEMA
 
-Fields required in the first production catalog:
+Every UO-3501 production entry contains exactly:
 - ItemId
 - DisplayName
 - Cave
 - Rarity
 - CollectionPosition
 
-Integration fields that must be resolved before their consuming production system ships:
-- VisualKey
-- ModelKey
-- IconKey
-- SellTier
+UO-3501 must not add Description, Tags, VisualKey, ModelKey, IconKey, SellTier,
+BaseSellValue, Weight, DropChance, PoolName, or RewardPool membership.
 
-Fields that may be added later without changing identity:
-- Description
-- Tags
+DESIGN DECISION DQ-IC-01 - RESOLVED:
+ItemConfig stores Rarity and contains no SellTier or BaseSellValue. Base sell value is
+derived from Rarity through a centralized Economy configuration. Economy balancing is
+not implemented by UO-3501.
 
-SellTier is an economy reference, not a random per-instance stat.
+Random Quality, random Value, and random per-instance gameplay stats are not part of
+production catalog identity.
 
-DESIGN QUESTION DQ-IC-01:
-Decide whether SellTier is stored directly in ItemConfig or derived through an explicitly
-referenced economy balance table. This document does not choose between those approaches.
+PROTOTYPE RUNTIME - NOT PRODUCTION DESIGN
 
-Random Quality and random per-instance gameplay stats are not part of finalized item
-identity unless separately approved in authoritative design.
+The current runtime is preserved temporarily for compatibility and testing. These facts
+describe Prototype Runtime only and are not production requirements:
+- Only Crystal has current reward-pool/content implementation.
+- The nine legacy prototype identifiers (full list and per-identifier disposition:
+  26_LEGACY_ITEM_DISPOSITION) are not approved production ItemIds.
+- CollectionCatalog is a partial prototype mapping, not the catalog authority.
+- Current item models/icons/visuals are generic, placeholder, or incomplete.
+- Analyze currently creates random Quality and a derived per-instance Value; neither is
+  part of finalized catalog identity.
+- Current ContainerConfig reward pools are prototype memberships and include cross-tier
+  references.
+- Before UO-3501, no runtime ItemConfig existed. UO-3501 adds only an isolated production
+  foundation; current prototype consumers remain on legacy configs until later migrations.
+
+This section records current behavior without approving it. UO-3501 creates no Analyze,
+Collection, Shelf, Economy, UI, reward-pool, or save migration.
 
 ITEM ID STATUS
 
-The identifiers below follow <CAVE>_<RARITY>_<POSITION> only to make all 96 design slots
-unambiguous. They are TEMPORARY DESIGN IDENTIFIERS PENDING APPROVAL, not approved final
-ItemIds. NAME PENDING is not a DisplayName.
+DESIGN DECISION DQ-IC-02 - RESOLVED:
+Every production ItemId uses <Cave>_<Rarity>_<Position>, with approved segments exactly as
+shown in the 96-slot table below. Examples: Crystal_Common_A, Lava_Rare_C,
+Frozen_Legendary_B, Meteor_Mythic_D.
 
-DESIGN QUESTION DQ-IC-02:
-Approve final stable ItemIds for all 96 slots, either by approving this identifier pattern
-or by supplying replacements before runtime ItemConfig production work.
+DisplayName is never an ItemId. Production ItemIds are stable and must not be renamed
+after release. NAME PENDING is the unresolved DisplayName placeholder.
 
-DESIGN QUESTION DQ-IC-03:
-Approve the 96 final DisplayNames and the required visual/model/icon references. No missing
-names or asset keys are invented by UO-3500.
+DESIGN DECISION DQ-IC-03 - DEFERRED:
+All 96 DisplayNames remain NAME PENDING. Final DisplayNames, models, icons, visual keys,
+and visual concepts belong to UO-3600 - Item Identity Design. UO-3501 invents or stores
+none of those fields.
 
 COMPLETE 96-SLOT CATALOG
 
 ## CRYSTAL
-CRYSTAL_COMMON_A - NAME PENDING
-CRYSTAL_COMMON_B - NAME PENDING
-CRYSTAL_COMMON_C - NAME PENDING
-CRYSTAL_COMMON_D - NAME PENDING
-CRYSTAL_UNCOMMON_A - NAME PENDING
-CRYSTAL_UNCOMMON_B - NAME PENDING
-CRYSTAL_UNCOMMON_C - NAME PENDING
-CRYSTAL_UNCOMMON_D - NAME PENDING
-CRYSTAL_RARE_A - NAME PENDING
-CRYSTAL_RARE_B - NAME PENDING
-CRYSTAL_RARE_C - NAME PENDING
-CRYSTAL_RARE_D - NAME PENDING
-CRYSTAL_EPIC_A - NAME PENDING
-CRYSTAL_EPIC_B - NAME PENDING
-CRYSTAL_EPIC_C - NAME PENDING
-CRYSTAL_EPIC_D - NAME PENDING
-CRYSTAL_LEGENDARY_A - NAME PENDING
-CRYSTAL_LEGENDARY_B - NAME PENDING
-CRYSTAL_LEGENDARY_C - NAME PENDING
-CRYSTAL_LEGENDARY_D - NAME PENDING
-CRYSTAL_MYTHIC_A - NAME PENDING
-CRYSTAL_MYTHIC_B - NAME PENDING
-CRYSTAL_MYTHIC_C - NAME PENDING
-CRYSTAL_MYTHIC_D - NAME PENDING
+Crystal_Common_A - NAME PENDING
+Crystal_Common_B - NAME PENDING
+Crystal_Common_C - NAME PENDING
+Crystal_Common_D - NAME PENDING
+Crystal_Uncommon_A - NAME PENDING
+Crystal_Uncommon_B - NAME PENDING
+Crystal_Uncommon_C - NAME PENDING
+Crystal_Uncommon_D - NAME PENDING
+Crystal_Rare_A - NAME PENDING
+Crystal_Rare_B - NAME PENDING
+Crystal_Rare_C - NAME PENDING
+Crystal_Rare_D - NAME PENDING
+Crystal_Epic_A - NAME PENDING
+Crystal_Epic_B - NAME PENDING
+Crystal_Epic_C - NAME PENDING
+Crystal_Epic_D - NAME PENDING
+Crystal_Legendary_A - NAME PENDING
+Crystal_Legendary_B - NAME PENDING
+Crystal_Legendary_C - NAME PENDING
+Crystal_Legendary_D - NAME PENDING
+Crystal_Mythic_A - NAME PENDING
+Crystal_Mythic_B - NAME PENDING
+Crystal_Mythic_C - NAME PENDING
+Crystal_Mythic_D - NAME PENDING
 
 ## LAVA
-LAVA_COMMON_A - NAME PENDING
-LAVA_COMMON_B - NAME PENDING
-LAVA_COMMON_C - NAME PENDING
-LAVA_COMMON_D - NAME PENDING
-LAVA_UNCOMMON_A - NAME PENDING
-LAVA_UNCOMMON_B - NAME PENDING
-LAVA_UNCOMMON_C - NAME PENDING
-LAVA_UNCOMMON_D - NAME PENDING
-LAVA_RARE_A - NAME PENDING
-LAVA_RARE_B - NAME PENDING
-LAVA_RARE_C - NAME PENDING
-LAVA_RARE_D - NAME PENDING
-LAVA_EPIC_A - NAME PENDING
-LAVA_EPIC_B - NAME PENDING
-LAVA_EPIC_C - NAME PENDING
-LAVA_EPIC_D - NAME PENDING
-LAVA_LEGENDARY_A - NAME PENDING
-LAVA_LEGENDARY_B - NAME PENDING
-LAVA_LEGENDARY_C - NAME PENDING
-LAVA_LEGENDARY_D - NAME PENDING
-LAVA_MYTHIC_A - NAME PENDING
-LAVA_MYTHIC_B - NAME PENDING
-LAVA_MYTHIC_C - NAME PENDING
-LAVA_MYTHIC_D - NAME PENDING
+Lava_Common_A - NAME PENDING
+Lava_Common_B - NAME PENDING
+Lava_Common_C - NAME PENDING
+Lava_Common_D - NAME PENDING
+Lava_Uncommon_A - NAME PENDING
+Lava_Uncommon_B - NAME PENDING
+Lava_Uncommon_C - NAME PENDING
+Lava_Uncommon_D - NAME PENDING
+Lava_Rare_A - NAME PENDING
+Lava_Rare_B - NAME PENDING
+Lava_Rare_C - NAME PENDING
+Lava_Rare_D - NAME PENDING
+Lava_Epic_A - NAME PENDING
+Lava_Epic_B - NAME PENDING
+Lava_Epic_C - NAME PENDING
+Lava_Epic_D - NAME PENDING
+Lava_Legendary_A - NAME PENDING
+Lava_Legendary_B - NAME PENDING
+Lava_Legendary_C - NAME PENDING
+Lava_Legendary_D - NAME PENDING
+Lava_Mythic_A - NAME PENDING
+Lava_Mythic_B - NAME PENDING
+Lava_Mythic_C - NAME PENDING
+Lava_Mythic_D - NAME PENDING
 
 ## FROZEN
-FROZEN_COMMON_A - NAME PENDING
-FROZEN_COMMON_B - NAME PENDING
-FROZEN_COMMON_C - NAME PENDING
-FROZEN_COMMON_D - NAME PENDING
-FROZEN_UNCOMMON_A - NAME PENDING
-FROZEN_UNCOMMON_B - NAME PENDING
-FROZEN_UNCOMMON_C - NAME PENDING
-FROZEN_UNCOMMON_D - NAME PENDING
-FROZEN_RARE_A - NAME PENDING
-FROZEN_RARE_B - NAME PENDING
-FROZEN_RARE_C - NAME PENDING
-FROZEN_RARE_D - NAME PENDING
-FROZEN_EPIC_A - NAME PENDING
-FROZEN_EPIC_B - NAME PENDING
-FROZEN_EPIC_C - NAME PENDING
-FROZEN_EPIC_D - NAME PENDING
-FROZEN_LEGENDARY_A - NAME PENDING
-FROZEN_LEGENDARY_B - NAME PENDING
-FROZEN_LEGENDARY_C - NAME PENDING
-FROZEN_LEGENDARY_D - NAME PENDING
-FROZEN_MYTHIC_A - NAME PENDING
-FROZEN_MYTHIC_B - NAME PENDING
-FROZEN_MYTHIC_C - NAME PENDING
-FROZEN_MYTHIC_D - NAME PENDING
+Frozen_Common_A - NAME PENDING
+Frozen_Common_B - NAME PENDING
+Frozen_Common_C - NAME PENDING
+Frozen_Common_D - NAME PENDING
+Frozen_Uncommon_A - NAME PENDING
+Frozen_Uncommon_B - NAME PENDING
+Frozen_Uncommon_C - NAME PENDING
+Frozen_Uncommon_D - NAME PENDING
+Frozen_Rare_A - NAME PENDING
+Frozen_Rare_B - NAME PENDING
+Frozen_Rare_C - NAME PENDING
+Frozen_Rare_D - NAME PENDING
+Frozen_Epic_A - NAME PENDING
+Frozen_Epic_B - NAME PENDING
+Frozen_Epic_C - NAME PENDING
+Frozen_Epic_D - NAME PENDING
+Frozen_Legendary_A - NAME PENDING
+Frozen_Legendary_B - NAME PENDING
+Frozen_Legendary_C - NAME PENDING
+Frozen_Legendary_D - NAME PENDING
+Frozen_Mythic_A - NAME PENDING
+Frozen_Mythic_B - NAME PENDING
+Frozen_Mythic_C - NAME PENDING
+Frozen_Mythic_D - NAME PENDING
 
 ## METEOR
-METEOR_COMMON_A - NAME PENDING
-METEOR_COMMON_B - NAME PENDING
-METEOR_COMMON_C - NAME PENDING
-METEOR_COMMON_D - NAME PENDING
-METEOR_UNCOMMON_A - NAME PENDING
-METEOR_UNCOMMON_B - NAME PENDING
-METEOR_UNCOMMON_C - NAME PENDING
-METEOR_UNCOMMON_D - NAME PENDING
-METEOR_RARE_A - NAME PENDING
-METEOR_RARE_B - NAME PENDING
-METEOR_RARE_C - NAME PENDING
-METEOR_RARE_D - NAME PENDING
-METEOR_EPIC_A - NAME PENDING
-METEOR_EPIC_B - NAME PENDING
-METEOR_EPIC_C - NAME PENDING
-METEOR_EPIC_D - NAME PENDING
-METEOR_LEGENDARY_A - NAME PENDING
-METEOR_LEGENDARY_B - NAME PENDING
-METEOR_LEGENDARY_C - NAME PENDING
-METEOR_LEGENDARY_D - NAME PENDING
-METEOR_MYTHIC_A - NAME PENDING
-METEOR_MYTHIC_B - NAME PENDING
-METEOR_MYTHIC_C - NAME PENDING
-METEOR_MYTHIC_D - NAME PENDING
+Meteor_Common_A - NAME PENDING
+Meteor_Common_B - NAME PENDING
+Meteor_Common_C - NAME PENDING
+Meteor_Common_D - NAME PENDING
+Meteor_Uncommon_A - NAME PENDING
+Meteor_Uncommon_B - NAME PENDING
+Meteor_Uncommon_C - NAME PENDING
+Meteor_Uncommon_D - NAME PENDING
+Meteor_Rare_A - NAME PENDING
+Meteor_Rare_B - NAME PENDING
+Meteor_Rare_C - NAME PENDING
+Meteor_Rare_D - NAME PENDING
+Meteor_Epic_A - NAME PENDING
+Meteor_Epic_B - NAME PENDING
+Meteor_Epic_C - NAME PENDING
+Meteor_Epic_D - NAME PENDING
+Meteor_Legendary_A - NAME PENDING
+Meteor_Legendary_B - NAME PENDING
+Meteor_Legendary_C - NAME PENDING
+Meteor_Legendary_D - NAME PENDING
+Meteor_Mythic_A - NAME PENDING
+Meteor_Mythic_B - NAME PENDING
+Meteor_Mythic_C - NAME PENDING
+Meteor_Mythic_D - NAME PENDING
 
 CATALOG INVARIANTS
 
@@ -207,79 +222,45 @@ CATALOG INVARIANTS
 
 LEGACY PROTOTYPE MIGRATION / REFERENCE
 
-These are current prototype facts only. Existing identifiers and placements are not
-approved final mappings into the 96-slot production catalog.
+[UO-3502] The full legacy disposition table (all nine prototype identifiers, their
+prototype rarity/placement/reward-pool facts, and their explicit per-identifier
+disposition) now lives exclusively in 26_LEGACY_ITEM_DISPOSITION - the single authoritative
+record. This document no longer duplicates that table; reference 26_LEGACY_ITEM_DISPOSITION
+for the complete per-identifier detail.
 
-Current Identifier: Coal
-Current GemConfig Rarity: Common
-Current Collection Placement: Crystal / Common / A
-Current RewardPool References: Common
-Final Mapping Status: Unresolved
-
-Current Identifier: Quartz
-Current GemConfig Rarity: Common
-Current Collection Placement: Crystal / Common / B
-Current RewardPool References: Common, Uncommon
-Final Mapping Status: Unresolved
-
-Current Identifier: Ruby
-Current GemConfig Rarity: Uncommon
-Current Collection Placement: Crystal / Uncommon / A
-Current RewardPool References: Common, Uncommon, Rare
-Final Mapping Status: Unresolved
-
-Current Identifier: Emerald
-Current GemConfig Rarity: Rare
-Current Collection Placement: Crystal / Rare / A
-Current RewardPool References: Uncommon, Rare, Epic
-Final Mapping Status: Unresolved
-
-Current Identifier: Sapphire
-Current GemConfig Rarity: Rare
-Current Collection Placement: Crystal / Rare / B
-Current RewardPool References: Rare, Epic
-Final Mapping Status: Unresolved
-
-Current Identifier: Diamond
-Current GemConfig Rarity: Epic
-Current Collection Placement: Crystal / Epic / A
-Current RewardPool References: Epic, Legendary
-Final Mapping Status: Unresolved
-
-Current Identifier: AuroraCrystal
-Current GemConfig Rarity: Legendary
-Current Collection Placement: Crystal / Legendary / A
-Current RewardPool References: Legendary, Mythic
-Final Mapping Status: Unresolved
-
-Current Identifier: CelestialQuartz
-Current GemConfig Rarity: Legendary
-Current Collection Placement: Crystal / Legendary / B
-Current RewardPool References: Legendary, Mythic
-Final Mapping Status: Unresolved
-
-Current Identifier: SecretCrystalItem
-Current GemConfig Rarity: Mythic
-Current Collection Placement: Crystal / Mythic / A
-Current RewardPool References: Legendary, Mythic
-Final Mapping Status: Unresolved
+Summary only: all nine prototype identifiers (Coal, Quartz, Ruby, Emerald, Sapphire,
+Diamond, AuroraCrystal, CelestialQuartz, SecretCrystalItem) are RETIRED, receive no
+production ItemId, occupy no production catalog slot, and may remain in prototype runtime
+until a later, explicitly-scoped migration/removal ticket.
 
 The current prototype reward pools contain cross-tier references. Those references are
 prototype-only and do not redefine catalog identity. Approved production Mining design
 requires normal reward pools to reference the same rarity tier; final memberships and
 weights remain content work.
 
-DESIGN QUESTION DQ-IC-04:
-For each of the nine legacy identifiers, decide whether it maps to one approved production
-ItemId, is renamed/replaced, or is retired during the development reset. Until that
-decision, no current Collection placement is a final production mapping.
+DESIGN DECISION DQ-IC-04 - RESOLVED:
+All nine prototype identifiers are retired. They receive no production mapping, occupy no
+production catalog slot, and must not appear in production ItemConfig. Prototype test data
+requires no production migration. Full legacy runtime removal is deferred to a later
+explicit migration ticket. See 26_LEGACY_ITEM_DISPOSITION for the authoritative per-
+identifier record implementing this decision.
 
-DESIGN QUESTION DQ-IC-05:
-Approve production reward-pool membership and weights after final ItemIds exist. Current
-prototype cross-tier memberships are historical references, not production content.
+DESIGN DECISION DQ-IC-05 - RESOLVED [UPDATED UO-3505-R1, stale equal-weight statement
+corrected]:
+RewardPool composition and weights belong exclusively to RewardPoolConfig. ItemConfig
+contains no Weight, DropChance, PoolName, or membership fields. Production pools contain
+the four same-Cave/same-Rarity items, one per Collection Position (A, B, C, D). Selection
+is NOT equal-weight/uniform: RewardPoolConfig resolves Cave + Container Tier -> Rarity,
+rolls a Position using the approved Analyze position distribution (18_CONTENT_DATABASE
+NORMAL POSITION DISTRIBUTION: A=40, B=30, C=20, D=10 by default; higher positions are
+strictly less likely than lower positions), then resolves the production ItemId for that
+Cave/Rarity/Position. UO-3501 does not create or migrate RewardPoolConfig and does not
+alter prototype pools. UO-3505/UO-3505-R1 implement RewardPoolConfig itself but do not
+migrate Analyze to consume it.
 
 SCOPE NOTE
 
-UO-3500 changes design documentation only. It does not create ItemConfig, migrate
-ContainerConfig/GemConfig/CollectionCatalog, alter runtime behavior, change UI or models,
-or modify save data.
+UO-3500 created this design authority. UO-3501 creates only the validated, read-only
+ItemConfig foundation with 96 NAME PENDING entries. It does not migrate or remove
+ContainerConfig/GemConfig/CollectionCatalog, alter reward pools, change gameplay, UI,
+models, economy balancing, or save data.

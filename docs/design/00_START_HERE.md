@@ -58,6 +58,14 @@ collectible items, also read:
 It is the authoritative design source for collectible identity and the only complete
 96-slot catalog. Other documents must not maintain a competing item list.
 
+For any task involving the nine retired legacy prototype Item identifiers (GemConfig's
+Coal/Quartz/Ruby/Emerald/Sapphire/Diamond/AuroraCrystal/CelestialQuartz/SecretCrystalItem),
+also read:
+26_LEGACY_ITEM_DISPOSITION.lua
+
+It is the authoritative source for retired legacy prototype Item dispositions - the single
+per-identifier detail record. Other documents may summarize it but must not duplicate it.
+
 WHEN TO READ EVERY DOCUMENT
 ---------------------------
 Read the complete Design Bible only for:
@@ -402,7 +410,11 @@ Latest locked changes and removed assumptions.
 Deferred and post-launch concepts.
 
 25_ITEM_CATALOG_DESIGN.lua
-Authoritative collectible identity, schema, 96-slot catalog, and legacy mapping questions.
+Authoritative collectible identity, schema, and the 96-slot catalog.
+
+26_LEGACY_ITEM_DISPOSITION.lua
+Authoritative source for retired legacy prototype Item dispositions - the single detailed
+per-identifier disposition record. Other documents may summarize it but must not duplicate it.
 
 99_ROADMAP.lua
 Development order.

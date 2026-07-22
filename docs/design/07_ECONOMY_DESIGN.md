@@ -45,15 +45,13 @@ Mythic      25,000
 
 ITEM CATALOG AUTHORITY
 ----------------------
-Sell metadata resolves from future runtime ItemConfig or from an explicitly referenced
-economy balance table. Economy consumes stable ItemIds from 25_ITEM_CATALOG_DESIGN and
-does not redefine ItemId, Cave, intrinsic Rarity, or CollectionPosition.
+Economy consumes stable ItemIds and ItemConfig Rarity but does not redefine ItemId,
+Cave, intrinsic Rarity, or CollectionPosition.
 
-DESIGN QUESTION DQ-IC-01:
-Decide whether SellTier is stored directly in ItemConfig or derived through an explicitly
-referenced economy balance table. Until approved, SellTier is an unresolved catalog-to-
-economy reference; this document's rarity/position/cave values remain balance inputs and
-do not become independent identity definitions.
+DESIGN DECISION DQ-IC-01 - RESOLVED:
+ItemConfig contains no SellTier or BaseSellValue. Base sell value is derived from Rarity
+through a centralized Economy configuration. UO-3501 adds no economy balancing and does
+not migrate EconomyService.
 
 POSITION SELL MODIFIER
 ----------------------

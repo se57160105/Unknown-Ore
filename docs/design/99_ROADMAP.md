@@ -4,6 +4,21 @@
 -- LATEST MERGED PRE-CODE V1 BASELINE
 --========================================================
 
+CANONICAL ITEM DEPENDENCY ORDER
+-------------------------------
+Game Design
+-> Item Catalog Design
+-> ItemConfig
+-> Legacy Migration
+-> Analyze Migration
+-> Collection Migration
+-> Shelf
+-> Economy
+-> UI
+
+No Collection, Shelf, Economy, or UI phase may be interpreted as preceding the catalog
+and ItemConfig work it consumes.
+
 PHASE 0 — BASELINE LOCK
 -----------------------
 Freeze Latest Merged V1 Design.
@@ -17,8 +32,20 @@ Resolve pending Progression schema decision.
   (provenance) remains open. See 13_IMPLEMENTATION_PLAN and 17_SAVE_SYSTEM.
 Create BalanceConfig.
 Create GameEnums.
-Complete UO-3500 authoritative Item Catalog design and approve stable ItemIds before the
-production ItemConfig and downstream content migrations.
+Complete the item architecture gate in this order before downstream item consumers:
+UO-3500 - Authoritative Item Catalog Design Refactor
+UO-3501 - Runtime ItemConfig Foundation
+UO-3502 - Legacy Item Disposition Record
+UO-3503 - Runtime Catalog Audit [COMPLETED]
+TBD - Future Runtime Migration (ticket not yet created or defined)
+UO-3504 - Collection Migration
+
+DQ-IC-01, DQ-IC-02, DQ-IC-04, and DQ-IC-05 are resolved for UO-3501.
+DQ-IC-03 names and visuals are deferred to UO-3600 - Item Identity Design.
+UO-3501 creates only ItemConfig; UO-3502 records the approved retirement disposition.
+UO-3503 completed the documentation-only Runtime Catalog Audit. Runtime removal and
+migration remain deferred to a future ticket whose number is TBD; that ticket is not
+created or defined here.
 
 PHASE 1 — DATA FOUNDATION
 -------------------------
@@ -64,8 +91,11 @@ Refined Container Instances
 Refinery prices
 Position distributions
 
-PHASE 5 — ANALYZE
------------------
+PHASE 5 — ANALYZE MIGRATION
+---------------------------
+Begins only after UO-3500, UO-3501, UO-3502, and the completed UO-3503 Runtime
+Catalog Audit. The future runtime migration ticket number is TBD; UO-3503 does not
+perform ContainerConfig or Analyze migration.
 AnalyzeService
 Slot progression
 Submit
@@ -88,8 +118,20 @@ HeldItemService
 HeldItemController
 Attachment/Weld display
 
-PHASE 7 — SHELF AND BUFF
+PHASE 7 — COLLECTION MIGRATION
+------------------------------
+Begins only after authoritative Analyze and Actual Item identity.
+UO-3504 migrates discovery keys and presentation to ItemConfig.
+Personal Reveal discovery
+Rarity sets
+Manual Claim
+24/24 rewards
+96/96 reward
+Trophy/Plot Effect hooks
+
+PHASE 8 — SHELF AND BUFF
 ------------------------
+Begins only after Collection migration.
 ShelfService
 BuffService
 Physical Shelves
@@ -99,8 +141,9 @@ Atomic Apply
 Final-state Inventory capacity validation
 Visitor inspect
 
-PHASE 8 — SELL AND ECONOMY
+PHASE 9 — SELL AND ECONOMY
 --------------------------
+Begins only after Shelf consumes authoritative item metadata.
 SellService
 Sell Selected
 Quantity controls
@@ -109,30 +152,6 @@ Quick Sell Uncommon
 Locked/Held/Shelf exclusions
 Transaction-time Sell Buff
 Economy telemetry
-
-PHASE 8.5 — AUTHORITATIVE CONTENT DATABASE
-------------------------------------------
-Complete before further Collection UI completion.
-
-Conceptual backlog sequence (roadmap only; these are not implementation tickets created
-by this design task):
-UO-3500 - Authoritative Item Catalog Design Refactor
-UO-3501 - Runtime ItemConfig Foundation
-UO-3502 - Legacy Item Mapping Decision
-UO-3503 - Container and Analyze Migration
-UO-3504 - Collection Migration
-
-Final stable ItemIds and legacy mappings must be approved before downstream production
-content migration. See 25_ITEM_CATALOG_DESIGN.
-
-PHASE 9 — COLLECTION
---------------------
-Personal Reveal discovery
-Rarity sets
-Manual Claim
-24/24 rewards
-96/96 reward
-Trophy/Plot Effect hooks
 
 PHASE 10 — MONETIZATION
 -----------------------

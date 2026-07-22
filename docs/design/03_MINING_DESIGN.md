@@ -51,9 +51,25 @@ an item's Cave, intrinsic rarity, or Collection position.
 Reward pools reference stable ItemIds defined by 25_ITEM_CATALOG_DESIGN and, at runtime,
 ItemConfig. Pool membership is only a reward reference and never redefines catalog
 metadata. The approved production rule for normal containers is same-tier membership as
-stated above. Current ContainerConfig cross-tier memberships are prototype-only history,
-not approved production content; final memberships and weights require approved catalog
-ItemIds.
+stated above.
+
+PROTOTYPE RUNTIME - NOT PRODUCTION DESIGN:
+Current ContainerConfig cross-tier memberships are prototype-only history, not approved
+production content.
+
+DESIGN DECISION DQ-IC-05 - RESOLVED [UPDATED UO-3505-R1, stale equal-weight statement
+corrected]:
+Production RewardPool composition and weights belong exclusively to RewardPoolConfig.
+Production selection is:
+  Cave + Container Tier
+  -> Resolve Rarity
+  -> Roll Position A/B/C/D using 40/30/20/10
+  -> Resolve production ItemId
+Selection is NOT equal-weight/uniform across the four same-Cave/same-Rarity ItemIds. See
+25_ITEM_CATALOG_DESIGN DQ-IC-05 and 18_CONTENT_DATABASE NORMAL POSITION DISTRIBUTION for
+the authoritative statement. UO-3501 does not create or migrate RewardPoolConfig;
+RewardPoolConfig itself was implemented by UO-3505/UO-3505-R1 and changes no current
+gameplay pool.
 
 BASE DROP RATES
 ---------------

@@ -27,9 +27,9 @@ Duplicate Actual Items may be displayed.
 AUTHORITATIVE ITEM METADATA
 ---------------------------
 Shelf assignments operate on unique Actual Item instances (ItemUID), each referencing a
-stable ItemId from 25_ITEM_CATALOG_DESIGN. Shelf display and buff metadata resolve from
-future runtime ItemConfig. Shelf does not independently define item DisplayName, Cave,
-Rarity, CollectionPosition, model, icon, or other visual identity. Multiple ItemUIDs may
+stable ItemId from 25_ITEM_CATALOG_DESIGN. Shelf classification metadata resolves from
+ItemConfig after the later Shelf migration. DisplayNames and visual/model/icon references
+remain deferred to UO-3600. Shelf does not independently define item identity. Multiple ItemUIDs may
 reference the same catalog ItemId without creating a second item definition.
 
 CAVE BUFF IDENTITY

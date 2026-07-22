@@ -14,20 +14,24 @@ BalanceConfig.lua:
 Runtime source of truth for numerical balance.
 
 ItemConfig.lua:
-Runtime implementation of the authoritative identity and metadata contract in
-25_ITEM_CATALOG_DESIGN. It owns the 96 Actual Item definitions; gameplay systems consume
-it and may not become item-definition authorities.
+Runtime implementation of the authoritative identity contract in
+25_ITEM_CATALOG_DESIGN. UO-3501 gives it exactly 96 immutable definitions with ItemId,
+DisplayName, Cave, Rarity, and CollectionPosition. It owns no sell values, RewardPool
+data, or visual fields. Gameplay systems consume it only after their later migrations.
 
 Required dependency direction:
-Design Item Catalog
+Game Design
+-> Item Catalog Design (25_ITEM_CATALOG_DESIGN)
 -> Runtime ItemConfig
--> ContainerConfig reward references
--> Analyze
--> Inventory
--> Collection
+-> Legacy Migration
+-> Analyze Migration (including ContainerConfig reward references and Inventory grants)
+-> Collection Migration
 -> Shelf
 -> Economy
 -> UI
+
+This order is mandatory. Catalog and ItemConfig work cannot be scheduled after any
+Collection, Shelf, Economy, or UI work that depends on authoritative item identity.
 
 GameEnums.lua:
 Stable IDs/enums for Cave, Tier, Location, transaction/result states, etc.

@@ -13,8 +13,9 @@ Never trust client balances, ownership, drop results, result items, sell totals,
 Numerical balance belongs in BalanceConfig.
 Collectible identity is designed in 25_ITEM_CATALOG_DESIGN and implemented in ItemConfig;
 no service or UI maintains a second item catalog.
-Stable shared enum domains belong in GameEnums. Stable collectible ItemIds belong to the
-authoritative catalog/ItemConfig, not an independent enum or gameplay system.
+Stable shared enum domains belong in GameEnums. Production collectible ItemIds use the
+locked <Cave>_<Rarity>_<Position> format and belong to the authoritative catalog/ItemConfig,
+not an independent enum or gameplay system.
 
 3. SERVICE RESPONSIBILITY
 -------------------------

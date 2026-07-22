@@ -63,6 +63,18 @@ StarterPlayer
         ├── CollectionController.lua
         └── ProgressionController.lua
 
+ITEM IDENTITY DEPENDENCY ORDER
+------------------------------
+Game Design
+-> Item Catalog Design
+-> ItemConfig
+-> Legacy Migration
+-> Analyze Migration
+-> Collection Migration
+-> Shelf
+-> Economy
+-> UI
+
 TASK ORDER
 ----------
 1. Resolve pending Progression schema decision. [RESOLVED UO-0003: persist
@@ -71,23 +83,25 @@ TASK ORDER
    See 08/10/13/17.]
 2. Build GameEnums.
 3. Build BalanceConfig.
-4. Complete 25_ITEM_CATALOG_DESIGN decisions and approve stable ItemIds.
-5. Build the complete 96-item ItemConfig from that authority.
-6. Data foundation and migration.
-7. TransactionService.
-8. Progression + Storage.
-9. Personal Mining Nodes.
-10. Fusion + Refinery.
-11. Analyze + Reveal.
-12. Actual Items + Lock + Held Item.
-13. Shelf + Buff.
-14. Sell.
-15. Collection.
+4. Record the approved DQ-IC decisions in 25_ITEM_CATALOG_DESIGN.
+5. Build the validated, read-only 96-entry ItemConfig using the locked ItemId format.
+6. Data foundation and TransactionService.
+7. Progression + Storage.
+8. Personal Mining Nodes.
+9. Fusion + Refinery.
+10. Record the approved retirement-without-mapping legacy disposition; defer runtime removal.
+11. Migrate Analyze reward/result identity and Actual Item grants.
+12. Migrate Collection discovery and presentation identity.
+13. Integrate Shelf + Buff with ItemConfig-backed metadata.
+14. Integrate Sell/Economy with authoritative metadata.
+15. Complete UI against authoritative replicated data.
 16. Monetization.
 17. 10-player Homebase/Social world.
-18. UI production.
-19. Balance simulation/playtest.
-20. Tutorial.
+18. Balance simulation/playtest.
+19. Tutorial.
+
+No downstream item consumer may define catalog identity or move ahead of its dependency
+in the item-identity order above.
 
 DO NOT CREATE V1 TASKS FOR
 --------------------------

@@ -6,8 +6,8 @@
 
 SHARED ITEM CATALOG AUTHORITY
 -----------------------------
-25_ITEM_CATALOG_DESIGN is the design authority and future runtime ItemConfig is the
-runtime authority for collectible identity. Services consume stable ItemIds and catalog
+25_ITEM_CATALOG_DESIGN is the design authority and UO-3501 ItemConfig is the
+runtime authority for production collectible identity. Services consume stable ItemIds and catalog
 metadata; no service defines a separate name, Cave, Rarity, CollectionPosition, model,
 icon, or sell identity.
 

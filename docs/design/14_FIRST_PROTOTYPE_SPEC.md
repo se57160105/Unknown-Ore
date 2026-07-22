@@ -10,6 +10,11 @@ The first playable prototype proves the current core architecture, not the full 
 
 PROTOTYPE MUST PROVE
 --------------------
+This numbered proof checklist describes Prototype Runtime coverage, not production
+dependency order. Production item work follows:
+Item Catalog Design -> ItemConfig -> Legacy Migration -> Analyze Migration ->
+Collection Migration -> Shelf -> Economy -> UI.
+
 1. Personal mining node ownership.
 2. Server-authoritative mining completion.
 3. Mining Speed snapshot.
@@ -33,13 +38,17 @@ PROTOTYPE MUST PROVE
 
 MINIMUM CONTENT
 ---------------
-Use a limited Crystal Cave content subset for prototype if needed.
 
-Production-bound prototype data must use approved stable ItemIds and final
-architecture patterns. Current Coal/Quartz/Ruby/Emerald/Sapphire/Diamond/AuroraCrystal/
-CelestialQuartz/SecretCrystalItem data predates the authoritative catalog and remains
-legacy prototype history with unresolved mappings in 25_ITEM_CATALOG_DESIGN. Temporary
-catalog slot identifiers are not final until approved.
+PROTOTYPE RUNTIME - NOT PRODUCTION DESIGN:
+The current implementation is Crystal-only, uses the nine legacy identifiers, partial
+CollectionCatalog placement, prototype reward pools, generic/placeholder visuals, random
+Quality and derived per-instance Value, and does not consume production ItemConfig.
+UO-3501 adds an isolated ItemConfig foundation without changing those prototype consumers.
+
+Production ItemIds use the locked <Cave>_<Rarity>_<Position> format. The nine legacy
+prototype identifiers are retired with no production mapping or catalog slot - see
+26_LEGACY_ITEM_DISPOSITION for the full identifier list and per-identifier disposition.
+Runtime removal is deferred to a later explicit migration ticket.
 
 DO NOT HARD-CODE PROTOTYPE ASSUMPTIONS
 --------------------------------------

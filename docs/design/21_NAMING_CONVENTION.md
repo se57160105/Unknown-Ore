@@ -29,16 +29,19 @@ Core
 Heart
 Relic
 
-ITEM ID CANDIDATE
------------------
-<CAVE>_<RARITY>_<POSITION>
+PRODUCTION ITEM ID - LOCKED (DQ-IC-02 RESOLVED)
+------------------------------------------------
+<Cave>_<Rarity>_<Position>
 
-Example design slot:
-METEOR_MYTHIC_D
+Examples:
+Crystal_Common_A
+Lava_Rare_C
+Frozen_Legendary_B
+Meteor_Mythic_D
 
-This is the temporary 96-slot design identifier pattern in 25_ITEM_CATALOG_DESIGN, not an
-approved final ItemId convention. Final stable ItemIds require product approval. No
-runtime or design document may silently treat the candidate pattern as final.
+Use only the approved Cave and Rarity spelling shown above and position A/B/C/D.
+DisplayName is never ItemId. Production ItemIds are stable and must not be renamed after
+release.
 
 CONTAINER STACK KEY
 -------------------
